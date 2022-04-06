@@ -22,6 +22,6 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) phoro use</string>
+	<string>$(PRODUCT_NAME) photo use</string>
 </dict>
 </plist>
