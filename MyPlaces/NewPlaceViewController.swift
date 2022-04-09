@@ -6,18 +6,21 @@
 //
 
 import UIKit
+import Cosmos
 
 
 class NewPlaceViewController: UITableViewController, UITextFieldDelegate {
     
     var currentPlace: Place?
     var imageIsChanged = false
+    var currentRating = 0.0
 
     @IBOutlet var placeImage: UIImageView!
     @IBOutlet var saveButton: UIBarButtonItem!
     @IBOutlet var placeName: UITextField!
     @IBOutlet var placeLocation: UITextField!
     @IBOutlet var placeType: UITextField!
+    @IBOutlet var cosmosView: CosmosView!
     
     
     
@@ -29,6 +32,11 @@ class NewPlaceViewController: UITableViewController, UITextFieldDelegate {
         placeName.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         
         setupEditScreen()
+        
+        cosmosView.settings.fillMode = .half
+        cosmosView.didTouchCosmos = { rating in
+            self.currentRating = rating
+        }
     }
     
     // MARK: Table view delegate
@@ -77,7 +85,7 @@ class NewPlaceViewController: UITableViewController, UITextFieldDelegate {
         }
         
         let imageData = image?.pngData()
-        let newPlace = Place(name: placeName.text!, location: placeLocation.text, type: placeType.text, imageData: imageData)
+        let newPlace = Place(name: placeName.text!, location: placeLocation.text, type: placeType.text, imageData: imageData, rating: currentRating)
         
         if currentPlace != nil {
             try! realm.write {
@@ -85,6 +93,7 @@ class NewPlaceViewController: UITableViewController, UITextFieldDelegate {
                 currentPlace?.location = newPlace.location
                 currentPlace?.type = newPlace.type
                 currentPlace?.imageData = newPlace.imageData
+                currentPlace?.rating = newPlace.rating
             }
         } else {
             StorageManager.saveObject(newPlace)
@@ -104,6 +113,7 @@ class NewPlaceViewController: UITableViewController, UITextFieldDelegate {
             placeName.text = currentPlace?.name
             placeLocation.text = currentPlace?.location
             placeType.text = currentPlace?.type
+            cosmosView.rating = currentPlace!.rating
         }
     }
     
